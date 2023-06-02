@@ -5,6 +5,7 @@ import EventLogistics from "@/components/event-detail/event-logistics";
 import EventSummary from "@/components/event-detail/event-summary";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import { getEventById, getFeaturedEvents } from "@/helpers/api-utils";
+import Head from "next/head";
 
 const EventDetailPage = (props) => {
   const { event } = props;
@@ -19,6 +20,10 @@ const EventDetailPage = (props) => {
 
   return (
     <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description}></meta>
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}
