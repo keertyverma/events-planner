@@ -1,4 +1,7 @@
-function handler(req, res) {
+import Comment from "@/models/comment";
+import { connectToDB } from "@/utils/database";
+
+async function handler(req, res) {
   const eventId = req.query.eventId;
 
   if (req.method === "POST") {
@@ -15,40 +18,42 @@ function handler(req, res) {
       return res.status(422).json({ message: "Invalid Input" });
     }
 
-    const newComment = {
-      _id: new Date().toISOString(),
-      eventId,
-      email,
-      name,
-      text,
-    };
+    try {
+      await connectToDB();
 
-    return res
-      .status(201)
-      .json({ message: "added comment", comment: newComment });
+      const newComment = await Comment.create({
+        name,
+        email,
+        text,
+        eventId,
+      });
+
+      return res
+        .status(201)
+        .json({ message: "added comment", comment: newComment });
+    } catch (err) {
+      return res.status(500).json({ message: err });
+    }
   }
 
   if (req.method === "GET") {
     // fetch comments for given eventId
-    return res.status(200).json({
-      message: "success",
-      comments: [
-        {
-          _id: "2023-06-03T03:41:50.864Z",
-          eventId: "e2",
-          email: "test@test.com",
-          name: "kv",
-          text: "newdafd",
-        },
-        {
-          _id: "2023-06-03T03:41:50.864sasZ",
-          eventId: "e2",
-          email: "test2@test.com",
-          name: "sumo",
-          text: "dasdadasd",
-        },
-      ],
-    });
+
+    try {
+      await connectToDB();
+      const commentsByEventId = await Comment.find({ eventId: eventId })
+        .select({
+          __v: 0,
+        })
+        .sort({ _id: -1 });
+
+      return res.status(200).json({
+        message: "success",
+        comments: commentsByEventId,
+      });
+    } catch (err) {
+      return res.status(500).json({ message: err });
+    }
   }
 }
 export default handler;
