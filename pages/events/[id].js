@@ -1,11 +1,11 @@
 import { Fragment } from "react";
+import Head from "next/head";
 
 import EventContent from "@/components/event-detail/event-content";
 import EventLogistics from "@/components/event-detail/event-logistics";
 import EventSummary from "@/components/event-detail/event-summary";
-import ErrorAlert from "@/components/ui/ErrorAlert";
+import Comments from "@/components/input/comments";
 import { getEventById, getFeaturedEvents } from "@/helpers/api-utils";
-import Head from "next/head";
 
 const EventDetailPage = (props) => {
   const { event } = props;
@@ -34,6 +34,7 @@ const EventDetailPage = (props) => {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </Fragment>
   );
 };
